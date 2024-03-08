@@ -1,0 +1,9 @@
+name: DEV build and deploy
+on: workflow_dispatch
+
+jobs:
+  dev-build-and-deploy:
+    uses: Travtus/.github/.github/workflows/build_and_deploy_sam_template_one_environment.yaml@main
+    secrets:
+      PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
+      AWS_OIDC_ROLE_ARN: ${{ secrets.AWS_DEV_OIDC_ROLE_ARN }}

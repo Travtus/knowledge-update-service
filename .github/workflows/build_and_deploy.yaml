@@ -1,0 +1,14 @@
+name: Build and deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    uses: Travtus/.github/.github/workflows/build_and_deploy_sam_template.yaml@main
+    secrets:
+      PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
+      AWS_DEV_OIDC_ROLE_ARN: ${{ secrets.AWS_DEV_OIDC_ROLE_ARN }}
+      AWS_QA_OIDC_ROLE_ARN: ${{ secrets.AWS_QA_OIDC_ROLE_ARN }}
+      AWS_UAT_OIDC_ROLE_ARN: ${{ secrets.AWS_UAT_OIDC_ROLE_ARN }}

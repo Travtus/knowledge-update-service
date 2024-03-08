@@ -1,0 +1,16 @@
+name: Build and test pull request
+
+on: [pull_request]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.PAT_GITHUB }}
+
+jobs:
+  pull-request-checks:
+    uses: Travtus/.github/.github/workflows/starter_template.yaml@main
+    secrets:
+      PAT_GITHUB: ${{ secrets.PAT_GITHUB }}
+    with:
+      PYTHON_VERSION: "3.8"
+      ENABLE_BDD: true
+      ENABLE_PYTEST: false
