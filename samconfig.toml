@@ -3,9 +3,15 @@ version = 0.1
 [dev.deploy]
 [dev.deploy.parameters]
 region = "us-east-2"
-capabilities = "CAPABILITY_NAMED_IAM"
-parameter_overrides = "EnvironmentName=\"dev\""
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "EnvironmentName=\"dev\" ProjectName=\"knowledge-update-service\" EventBusName=\"test-chat\""
 ProjectName="knowledge-curation"
 EventBusName="test-chat"
 image_repositories = []
+stack_name = "knowledge-update-service"
+resolve_s3 = true
+s3_prefix = "knowledge-update-service"
+profile = "dev"
+confirm_changeset = true
+disable_rollback = true
 

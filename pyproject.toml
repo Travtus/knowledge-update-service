@@ -1,14 +1,66 @@
 [tool.poetry]
-name = "knowledge-curation-service"
+name = "knowledge_curation"
 version = "0.1.0"
-description = "Service which hanldes updates of knowledge leve for companies and communites"
+description = "Service responsible for handling updates of knowledge wiki's for companies and communites"
 authors = ["Travtus"]
 readme = "README.md"
+
+[tool.poetry-exec-plugin.commands]
+build = "poetry export -f requirements.txt > requirements.txt --without-hashes && sam build"
+consume-sqs-event = "sam build && sam local generate-event sqs receive-message > local-event.json && sam local invoke -e local-event.json && rm local-event.json"
+lint = "flake8"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 
+[tool.poetry.group.dev.dependencies]
+black = "^24.2.0"
+flake8 = "^7.0.0"
+ruff = "^0.3.1"
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[project.urls]
+Documentation = "https://www.notion.so/travtushome/Agent-Architecture-eae2245889b84f4f90f1432f9547bb9e#a731c33ec62744bd84e8aaf2def5c3a7"
+Lucid = "https://lucid.app/lucidchart/382fd0d4-bb2a-48dc-8245-7613f7768ea9/edit?viewport_loc=93%2C-386%2C2904%2C1672%2C0_0&invitationId=inv_64a4cc94-0d5d-4e9f-87a7-71b02c5aee8b&referringApp=slack&loaddialog=SlackLinkPrompt"
+
+# Linting config
+[tool.isort]
+profile = "black"
+
+[tool.black]
+line-length = 80
+
+[tool.ruff]
+line-length = 80
+select = [
+    # flake8-builtins
+    "A",
+    # flake8-annotations
+    "ANN",
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # pydocstyle
+    "D",
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pep8-naming
+    "N",
+    # flake8-pytest-style
+    "PT",
+    # flake8-return
+    "RET",
+    # flake8-bandit
+    "S",
+    # pyupgrade
+    "UP",
+    # pycodestyle
+    "W"
+]
