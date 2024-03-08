@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "knowledge-curation-service"
+version = "0.1.0"
+description = "Service which hanldes updates of knowledge leve for companies and communites"
+authors = ["Travtus"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

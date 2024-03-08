@@ -1,0 +1,11 @@
+version = 0.1
+[dev]
+[dev.deploy]
+[dev.deploy.parameters]
+region = "us-east-2"
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "EnvironmentName=\"dev\""
+ProjectName="knowledge-curation"
+EventBusName="test-chat"
+image_repositories = []
+

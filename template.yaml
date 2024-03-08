@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM template for the knowldge curation service
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 900
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    # TODO: add other environments
+    AllowedValues: ["dev"]
+    Default: "dev"
+  ProjectName:
+    Type: String
+    Description: "Project name - used for grouping multiple services under one project."
+    Default: "knowledge-curation"
+  EventBusName:
+    Type: String
+    Description: "The name of the event bus to publish events to."
+
+Resources:
+  KnowledgeCuration:
+    Type: AWS::Serverless::Function
+    FunctionName:
+      !Join [
+        "-",
+        [!Ref ProjectName, !Ref EnvironmentName, "knowledge-curation"],
+      ]
+    Properties:
+      Description: "AWS Lambda to process knowledge update events"
+      CodeUri: .
+      Handler: knowledge-curation.lambda_handler.handle
+      Runtime: python3.12
+      Role: !GetAtt KnowledgeCurationRole.Arn
+      Timeout: 900
+      Environment:
+        Variables:
+          EVENT_BUS_NAME: !Ref EventBusName
+      Events:
+        EmailReportingEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt KnowledgeCurationQueue.Arn
+            BatchSize: 1
+
+  KnowledgeCurationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 172800
+      VisibilityTimeout: 1800
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt KnowledgeCurationDLQ.Arn
+        maxReceiveCount: 5
+  KnowledgeCurationDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 172800
+
+  KnowledgeCurationListener:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Join ["-", ["knowledge-curation", !Ref EnvironmentName]]
+      Description: "Knowledge Curation Listener"
+      EventBusName: !Ref EventBusName
+      EventPattern:
+        detail-type:
+          - knowledge-update
+          - community-update
+          - periodic-refresh
+      Targets:
+        - Arn: !GetAtt KnowledgeCurationQueue.Arn
+          Id: knowledge-curation-sqs
+
+  EventBridgeToKnowledgeCurationSqsPolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: SQS:SendMessage
+            Resource: !GetAtt KnowledgeCurationQueue.Arn
+      Queues:
+        - Ref: KnowledgeCurationQueue
+
+  KnowledgeCurationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowLambdaServiceToAssumeRole"
+            Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+                - "events.amazonaws.com"
+      Policies:
+        - PolicyName: AllowSQSAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AllowSQSAccess
+                Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                  - sqs:DeleteMessage
+                  - sqs:ReceiveMessage
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - !GetAtt KnowledgeCurationDLQ.Arn
+                  - !GetAtt KnowledgeCurationQueue.Arn
+        - PolicyName: EventBusPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: EventBusPermission
+                Effect: Allow
+                Action:
+                  - events:PutEvents
+                Resource:
+                  - !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:event-bus/${EventBusName}"
+
+Outputs:
+  KnowledgeCurationRoleArn:
+    Description: >
+      IAM Role for Knowledge Curation lambda with basic execute policy.
+    Value: !GetAtt KnowledgeCurationRole.Arn
+  KnowledgeCurationRoleName:
+    Description: >
+      IAM Role for lambda with basic execute policy
+    Value: !Ref KnowledgeCurationRole
