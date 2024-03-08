@@ -1,27 +1,14 @@
-[tool.poetry]
-name = "knowledge_curation"
+[project]
+name = "knowledge_update"
 version = "0.1.0"
 description = "Service responsible for handling updates of knowledge wiki's for companies and communites"
 authors = ["Travtus"]
 readme = "README.md"
-
-[tool.poetry-exec-plugin.commands]
-build = "poetry export -f requirements.txt > requirements.txt --without-hashes && sam build"
-consume-sqs-event = "sam build && sam local generate-event sqs receive-message > local-event.json && sam local invoke -e local-event.json && rm local-event.json"
-lint = "flake8"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.2.0"
-flake8 = "^7.0.0"
-ruff = "^0.3.1"
-isort = "^5.13.2"
+requires-python = ">= 3.11"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
 
 [project.urls]
 Documentation = "https://www.notion.so/travtushome/Agent-Architecture-eae2245889b84f4f90f1432f9547bb9e#a731c33ec62744bd84e8aaf2def5c3a7"

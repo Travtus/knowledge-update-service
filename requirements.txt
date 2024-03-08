@@ -1,1 +1,4 @@
+git+https://${GITHUB_TOKEN}@github.com/Travtus/common-packages.git@v1.13.1
 
+dependency_injector==4.41.0
+git+https://${GITHUB_TOKEN}@github.com/Travtus/clients-and-events.git@v1.57.2

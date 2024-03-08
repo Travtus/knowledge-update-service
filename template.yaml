@@ -34,7 +34,7 @@ Resources:
       Description: "AWS Lambda to process knowledge update events from an SQS queue"
       CodeUri: .
       Handler: knowledge_update.lambda_handler.handle
-      Runtime: python3.12
+      Runtime: python3.11
       Role: !GetAtt KnowledgeUpdateRole.Arn
       Timeout: 900
       Environment:
@@ -68,9 +68,9 @@ Resources:
       EventBusName: !Ref EventBusName
       EventPattern:
         detail-type:
-          - knowledge-update
-          - community-update
-          - periodic-refresh
+          - knowledge_update
+          - community_update
+          - periodic_refresh
       Targets:
         - Arn: !GetAtt KnowledgeUpdateQueue.Arn
           Id: knowledge-update-sqs

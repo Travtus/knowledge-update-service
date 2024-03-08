@@ -1,0 +1,4 @@
+pytest
+boto3
+moto==4.1.12
+python-dotenv
