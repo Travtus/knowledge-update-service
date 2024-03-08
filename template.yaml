@@ -11,8 +11,7 @@ Globals:
 Parameters:
   EnvironmentName:
     Type: String
-    # TODO: add other environments
-    AllowedValues: ["dev"]
+    AllowedValues: ["dev", "qa", "uat", "prod"]
     Default: "dev"
   ProjectName:
     Type: String

@@ -5,13 +5,37 @@ version = 0.1
 region = "us-east-2"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "EnvironmentName=\"dev\" ProjectName=\"knowledge-update-service\" EventBusName=\"test-chat\""
-ProjectName="knowledge-curation"
-EventBusName="test-chat"
 image_repositories = []
 stack_name = "knowledge-update-service"
-resolve_s3 = true
 s3_prefix = "knowledge-update-service"
-profile = "dev"
-confirm_changeset = true
-disable_rollback = true
+
+[qa]
+[qa.deploy]
+[qa.deploy.parameters]
+region = "us-east-2"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "EnvironmentName=\"qa\" ProjectName=\"knowledge-update-service\" EventBusName=\"adam3-bus\""
+image_repositories = []
+stack_name = "knowledge-update-service"
+s3_prefix = "knowledge-update-service"
+
+[uat]
+[uat.deploy]
+[uat.deploy.parameters]
+region = "us-east-2"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "EnvironmentName=\"uat\" ProjectName=\"knowledge-update-service\" EventBusName=\"adam3-bus\""
+image_repositories = []
+stack_name = "knowledge-update-service"
+s3_prefix = "knowledge-update-service"
+
+[prod]
+[prod.deploy]
+[prod.deploy.parameters]
+region = "us-east-2"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "EnvironmentName=\"prod\" ProjectName=\"knowledge-update-service\" EventBusName=\"adam3-bus\""
+image_repositories = []
+stack_name = "knowledge-update-service"
+s3_prefix = "knowledge-update-service"
 
